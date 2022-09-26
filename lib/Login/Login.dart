@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sgx/ForgotPassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -16,13 +17,14 @@ class _LoginState extends State<Login> {
   bool _isLoading = false;
 
   @override
+  var name;
   postData(String email, String password) async {
     String url = 'https://development.erpsofts.com/apis/login';
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map body = {"email ": email, "password": password};
     var jsonResponse;
     var res = await http.post(Uri.parse(url), body: body);
-    if (res.statusCode == 200) {
+    if (res.statusCode == 201) {
       jsonResponse = json.decode(res.body);
       print("Status : ${res.statusCode}");
       print("Status : ${res.body}");
@@ -31,6 +33,28 @@ class _LoginState extends State<Login> {
           _isLoading = false;
         });
         sharedPreferences.setString('token', jsonResponse['token']);
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  DisplayData() async {
+    String url = 'https://development.erpsofts.com/apis/school_config';
+    Map<String, dynamic> jsonResponse;
+    var res = await http.post(Uri.parse(url));
+    jsonResponse = json.decode(res.body);
+    if (res.statusCode == 200) {
+      print("Response status:${res.statusCode}");
+      print("Response status:${res.body}");
+      if (jsonResponse != null) {
+        setState(() {
+          _isLoading = false;
+        });
+        name = jsonDecode(jsonResponse['name']);
+        print('************' + name);
       }
     } else {
       setState(() {
@@ -55,118 +79,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  String sum = "0";
-  bool isLoading = true;
-
-  Future openUserName() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Forgot Password'),
-          content: TextFormField(
-            style: const TextStyle(color: Colors.black),
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.indigo),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
-              ),
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.indigo),
-              onPressed: () {
-                openPhoneNumber();
-              },
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-  Future openPhoneNumber() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Forgot Password'),
-          content: TextFormField(
-            style: const TextStyle(color: Colors.black),
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: '',
-              labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.indigo),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
-              ),
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.indigo),
-              onPressed: () {
-                openOtp();
-              },
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-  Future openOtp() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Enter OTP'),
-          content: TextFormField(
-            style: const TextStyle(color: Colors.black),
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
-            decoration: const InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.indigo),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
-              ),
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.indigo),
-              onPressed: () {},
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
   Widget _buildEmail() {
     return Padding(
       padding: const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
@@ -217,23 +129,16 @@ class _LoginState extends State<Login> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.indigo),
         onPressed: () {
-          _emailController.text == "" || _passwordController.text == ""
-              ? null
-              : () {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  postData(_emailController.text, _passwordController.text);
-                };
+          postData(_emailController.text, _passwordController.text);
         },
-        child:const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                  fontSize: 20,
-                ),
-              ),
+        child: const Text(
+          "Submit",
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 20,
+          ),
+        ),
       ),
     );
   }
@@ -263,7 +168,10 @@ class _LoginState extends State<Login> {
       padding: const EdgeInsets.all(5),
       child: TextButton(
         onPressed: () {
-          openUserName();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForgotPassword()),
+          );
         },
         child: Text(
           'Forgot Password ?',
@@ -283,17 +191,17 @@ class _LoginState extends State<Login> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: Image.asset('assets/login.jpg').image,
-                      fit: BoxFit.cover)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildContainer(),
-                ],
-              ),
-    ),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: Image.asset('assets/login.jpg').image,
+                  fit: BoxFit.cover)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _buildContainer(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -326,7 +234,7 @@ class _LoginState extends State<Login> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: const <Widget>[
                     Text(
-                      "Development",
+                      '',
                       maxLines: 2,
                       style: TextStyle(
                         fontSize: 20,
