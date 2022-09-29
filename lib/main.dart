@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Login/Login.dart';
+import 'SpalshScreen/SpalshScreen.dart';
 
 void main() {
   runApp(Sgx());
@@ -11,7 +11,7 @@ class Sgx extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home: Splash(),
     );
   }
 }

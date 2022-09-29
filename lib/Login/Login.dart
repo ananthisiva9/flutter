@@ -1,66 +1,24 @@
-import 'dart:convert';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sgx/ForgotPassword.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sgx/ForgotPassword/ForgotPassword.dart';
+import 'package:sgx/Utility/state_enum.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
+import 'Login_controller.dart';
 
 class Login extends StatefulWidget {
+  String name;
+  Login({required this.name});
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
-  @override
-  var name;
-  postData(String email, String password) async {
-    String url = 'https://development.erpsofts.com/apis/login';
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map body = {"email ": email, "password": password};
-    var jsonResponse;
-    var res = await http.post(Uri.parse(url), body: body);
-    if (res.statusCode == 201) {
-      jsonResponse = json.decode(res.body);
-      print("Status : ${res.statusCode}");
-      print("Status : ${res.body}");
-      if (jsonResponse != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        sharedPreferences.setString('token', jsonResponse['token']);
-      }
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  DisplayData() async {
-    String url = 'https://development.erpsofts.com/apis/school_config';
-    Map<String, dynamic> jsonResponse;
-    var res = await http.post(Uri.parse(url));
-    jsonResponse = json.decode(res.body);
-    if (res.statusCode == 200) {
-      print("Response status:${res.statusCode}");
-      print("Response status:${res.body}");
-      if (jsonResponse != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        name = jsonDecode(jsonResponse['name']);
-        print('************' + name);
-      }
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void initState() {
+    super.initState();
   }
 
   _launchWhatsapp() async {
@@ -88,7 +46,7 @@ class _LoginState extends State<Login> {
         keyboardType: TextInputType.emailAddress,
         controller: _emailController,
         decoration: const InputDecoration(
-          labelText: 'Username',
+          labelText: 'Admin Number',
           labelStyle: TextStyle(color: Colors.black, fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.indigo),
@@ -123,20 +81,23 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildLoginBtn() {
+  Widget _buildLoginBtn(LoginController controller) {
     return Padding(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.indigo),
         onPressed: () {
-          postData(_emailController.text, _passwordController.text);
+          if (controller.state != StateEnum.loading) {
+            controller.loginMethod(
+                _emailController.text, _passwordController.text);
+          }
         },
         child: const Text(
-          "Submit",
+          "Login",
           style: TextStyle(
             color: Colors.white,
-            letterSpacing: 1.5,
             fontSize: 20,
+            fontFamily: 'Avenir',
           ),
         ),
       ),
@@ -190,23 +151,29 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: Image.asset('assets/login.jpg').image,
-                  fit: BoxFit.cover)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _buildContainer(),
-            ],
-          ),
+        body: ChangeNotifierProvider(
+          create: (context) => LoginController(context),
+          child:
+              Consumer<LoginController>(builder: (context, controller, child) {
+            return Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: Image.asset('assets/login.jpg').image,
+                      fit: BoxFit.cover)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _buildContainer(controller),
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
   }
 
-  Widget _buildContainer() {
+  Widget _buildContainer(LoginController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -215,13 +182,13 @@ class _LoginState extends State<Login> {
             Radius.circular(10),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height * 0.65,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const Padding(
@@ -232,22 +199,23 @@ class _LoginState extends State<Login> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const <Widget>[
-                    Text(
-                      '',
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.indigo,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        widget.name.toString(),
+                        style: const TextStyle(
+                          color: Colors.indigo,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                    )
                   ],
                 ),
                 _buildEmail(),
                 _buildPassword(),
-                _buildLoginBtn(),
+                _buildLoginBtn(controller),
                 _buildForgotPassword(),
                 _buildNeedHelp(),
               ],
