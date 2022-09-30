@@ -3,63 +3,28 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:sgx/Utility/api_endpoint.dart';
+import 'package:http/http.dart' as http;
 
-import 'OtpVerification.dart';
-
-class ForgotPassword extends StatefulWidget {
+class GetOTP extends StatefulWidget {
   @override
-  _ForgotPasswordState createState() => _ForgotPasswordState();
+  _GetOTPState createState() => _GetOTPState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _GetOTPState extends State<GetOTP> {
+  TextEditingController _otpController = TextEditingController();
   @override
-  TextEditingController _emailController = TextEditingController();
-  bool _isLoading = false;
-  var mobileNo;
-
-  forgotPassword(String email, BuildContext context) async {
-    String url = ApiEndPoint.forgot_password;
-    Map body = {"email": email};
-    Map<String, dynamic> jsonResponse;
-    var res = await http.post(Uri.parse(url), body: body);
-    jsonResponse = json.decode(res.body);
-    if (res.statusCode == 201) {
-      mobileNo = jsonResponse['data'];
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => OtpVerification(
-              mobileNo: mobileNo,
-              email: _emailController.text,
-            )),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Something went wrong!'),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
-
-  late String email;
-
-  Widget _buildEmail() {
+  Widget _buildOTP() {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextFormField(
         style: const TextStyle(color: Colors.black),
         cursorColor: Colors.black,
         keyboardType: TextInputType.emailAddress,
-        controller: _emailController,
-        onChanged: (value) {
-          setState(() {
-            email = value;
-          });
-        },
+        controller: _otpController,
+        onChanged: (value) {},
         decoration: const InputDecoration(
-          labelText: 'Admin Number',
+          labelText: 'Enter OTP',
           labelStyle: TextStyle(
               color: Colors.black, fontSize: 14, fontFamily: 'Avenir'),
           enabledBorder: OutlineInputBorder(
@@ -73,23 +38,30 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
+
   Widget _buildSubmitBtn(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.indigo),
-        onPressed: () {
-          forgotPassword(_emailController.text, context);
-        },
-        child: const Text(
-          "Submit",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontFamily: 'Avenir',
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          height: 1.4 * (MediaQuery.of(context).size.height / 20),
+          width: 5 * (MediaQuery.of(context).size.width / 08),
+          margin: const EdgeInsets.only(bottom: 20),
+          child: ElevatedButton(
+            onPressed: () {
+            },
+            child: const Text(
+              "Submit",
+              style: TextStyle(
+                color: Colors.black,
+                letterSpacing: 1.5,
+                fontSize: 20,
+                fontFamily: 'Avenir',
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -131,7 +103,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "Forgot Password ",
+                  "Forgot Password",
                   maxLines: 2,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
@@ -145,7 +117,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 const Divider(
                   height: 20,
                 ),
-                _buildEmail(),
+                const Text(
+                  'Please Enter OPT ',
+                  style: TextStyle(
+                      color: Colors.black, fontSize: 18),
+                ),
+                _buildOTP(),
                 _buildSubmitBtn(context),
               ],
             ),

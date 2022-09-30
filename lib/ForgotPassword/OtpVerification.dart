@@ -1,30 +1,70 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sgx/ForgotPassword/GetOTP.dart';
+import 'package:sgx/Utility/api_endpoint.dart';
+import 'package:http/http.dart' as http;
 
 class OtpVerification extends StatefulWidget {
-  String mobileNo;
-  OtpVerification({required this.mobileNo});
+  String mobileNo, email;
+  OtpVerification({required this.mobileNo, required this.email});
   @override
   _OtpVerificationState createState() => _OtpVerificationState();
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
+  OTPVerification() async {
+    String url = ApiEndPoint.otp;
+    Map body = {"email": widget.email, "phone": widget.mobileNo};
+    Map<String, dynamic> jsonResponse;
+    var res = await http.post(Uri.parse(url), body: body);
+    jsonResponse = json.decode(res.body);
+    if (res.statusCode == 201) {
+      print(widget.email + widget.mobileNo);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please Enter OTP'),
+        backgroundColor: Colors.red,
+      ));
+      // Navigator.push(
+      //  context,
+      // MaterialPageRoute(
+      //   builder: (context) => OtpVerification(
+      //   mobileNo: mobileNo,
+      // email: _emailController.text,
+      // )),
+      //);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Something went wrong!'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
   @override
-  late String email;
-  Widget _buildEmail() {
+  Widget _buildMobileNumber() {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            height: 50,
-            width: 100,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+          const Text(
+            'Phone Number : ',
+            style: TextStyle(
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              widget.mobileNo,
+              style: const TextStyle(
+                  color: Colors.indigo,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
             ),
-            child: Text(widget.mobileNo),
           ),
         ],
       ),
@@ -40,9 +80,17 @@ class _OtpVerificationState extends State<OtpVerification> {
           width: 5 * (MediaQuery.of(context).size.width / 08),
           margin: const EdgeInsets.only(bottom: 20),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              OTPVerification();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GetOTP(),
+                ),
+              );
+            },
             child: const Text(
-              "Submit",
+              "Get OTP",
               style: TextStyle(
                 color: Colors.black,
                 letterSpacing: 1.5,
@@ -108,7 +156,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                 const Divider(
                   height: 20,
                 ),
-                _buildEmail(),
+                _buildMobileNumber(),
                 _buildSubmitBtn(context),
               ],
             ),

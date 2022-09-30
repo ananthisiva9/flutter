@@ -1,14 +1,15 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sgx/ForgotPassword/ForgotPassword.dart';
+import 'package:sgx/Utility/api_endpoint.dart';
 import 'package:sgx/Utility/state_enum.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Login_controller.dart';
 
 class Login extends StatefulWidget {
-  String name;
-  Login({required this.name});
   @override
   _LoginState createState() => _LoginState();
 }
@@ -19,6 +20,30 @@ class _LoginState extends State<Login> {
 
   void initState() {
     super.initState();
+    getData();
+  }
+
+  var logo, name;
+  late String data;
+  bool isLoading = true;
+  @override
+  getData() async {
+    String url = ApiEndPoint.school_data;
+    var response = await http.get(Uri.parse(url));
+    if (response.statusCode == 201) {
+      data = response.body;
+      setState(() {
+        isLoading = false;
+        data = response.body;
+        name = jsonDecode(data)['data']['name'];
+        logo = jsonDecode(data)['logo'];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Something Went Wrong!!!'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   _launchWhatsapp() async {
@@ -191,11 +216,12 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Image(
-                      image: AssetImage('assets/demo logo.png'), height: 70),
-                ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image(
+                      image: NetworkImage(logo.toString()),
+                      height: 50,
+                    )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -203,7 +229,7 @@ class _LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        widget.name.toString(),
+                        name.toString(),
                         style: const TextStyle(
                           color: Colors.indigo,
                           fontSize: 18,

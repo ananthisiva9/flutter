@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sgx/Login/Login.dart';
 import 'package:sgx/Login/Login_model.dart';
-import 'package:sgx/Onboard/OnBoard.dart';
 import 'package:sgx/Utility/global.dart';
 
 class SplashScreenController with ChangeNotifier {
@@ -43,7 +43,7 @@ class SplashScreenController with ChangeNotifier {
 
   goToOnboarding() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Onbording()));
+        context, MaterialPageRoute(builder: (context) => Login()));
   }
 
   goToClientDashboard() {
