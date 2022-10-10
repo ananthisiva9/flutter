@@ -1,18 +1,20 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sgx/Utility/api_endpoint.dart';
-import 'package:http/http.dart' as http;
 
 class GetOTP extends StatefulWidget {
+  //String mobileNo;
+ // GetOTP({required this.mobileNo});
   @override
   _GetOTPState createState() => _GetOTPState();
 }
 
 class _GetOTPState extends State<GetOTP> {
   TextEditingController _otpController = TextEditingController();
+//  FirebaseAuth auth = FirebaseAuth.instance;
+  String verificationIDRecevived = "";
+
   @override
   Widget _buildOTP() {
     return Padding(
@@ -38,17 +40,23 @@ class _GetOTPState extends State<GetOTP> {
     );
   }
 
-
   Widget _buildSubmitBtn(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          height: 1.4 * (MediaQuery.of(context).size.height / 20),
-          width: 5 * (MediaQuery.of(context).size.width / 08),
+          height: 1.4 * (MediaQuery
+              .of(context)
+              .size
+              .height / 20),
+          width: 5 * (MediaQuery
+              .of(context)
+              .size
+              .width / 08),
           margin: const EdgeInsets.only(bottom: 20),
           child: ElevatedButton(
             onPressed: () {
+             // verifyNumber();
             },
             child: const Text(
               "Submit",
@@ -71,7 +79,9 @@ class _GetOTPState extends State<GetOTP> {
         body: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: Image.asset('assets/login.jpg').image,
+                  image: Image
+                      .asset('assets/login.jpg')
+                      .image,
                   fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -93,8 +103,14 @@ class _GetOTPState extends State<GetOTP> {
             Radius.circular(10),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.5,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.8,
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
@@ -119,8 +135,7 @@ class _GetOTPState extends State<GetOTP> {
                 ),
                 const Text(
                   'Please Enter OPT ',
-                  style: TextStyle(
-                      color: Colors.black, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
                 _buildOTP(),
                 _buildSubmitBtn(context),
@@ -131,4 +146,23 @@ class _GetOTPState extends State<GetOTP> {
       ],
     );
   }
+
+//void verifyNumber() {
+// auth.verifyPhoneNumber(
+//   phoneNumber: widget.mobileNo,
+// verificationCompleted: (PhoneAuthCredential cerdential) async {
+// await auth.signInWithCredential(cerdential).then((value) {
+// print("You Are Logged in Successfully");
+// });
+// },
+// verificationFailed: (FirebaseAuthException exception) {
+// print(exception.message);
+// },
+// codeSent: (String verificationID, int? resendToken) {
+// verificationIDRecevived = verificationID;
+// setState(() {});
+// },
+//    codeAutoRetrievalTimeout: (String verificationID) {});
+//}
+//}
 }

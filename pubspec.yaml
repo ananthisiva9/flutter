@@ -43,6 +43,8 @@ dependencies:
   provider:
   google_fonts:
   url_launcher:
+  firebase_core:
+  firebase_auth:
 
 dev_dependencies:
   flutter_test:

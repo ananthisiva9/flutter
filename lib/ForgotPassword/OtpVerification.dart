@@ -22,19 +22,10 @@ class _OtpVerificationState extends State<OtpVerification> {
     var res = await http.post(Uri.parse(url), body: body);
     jsonResponse = json.decode(res.body);
     if (res.statusCode == 201) {
-      print(widget.email + widget.mobileNo);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please Enter OTP'),
         backgroundColor: Colors.red,
       ));
-      // Navigator.push(
-      //  context,
-      // MaterialPageRoute(
-      //   builder: (context) => OtpVerification(
-      //   mobileNo: mobileNo,
-      // email: _emailController.text,
-      // )),
-      //);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Something went wrong!'),
