@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sgx/Utility/api_endpoint.dart';
+import 'package:sgx/Widget/loading_icon.dart';
 import 'SpalshScreen_controller.dart';
 
 class Splash extends StatefulWidget {
@@ -105,6 +106,7 @@ class _SplashState extends State<Splash> {
                   padding: const EdgeInsets.all(8.0),
                   child: Image.asset('assets/just name.png', height: 30),
                 ),
+                LoadingIcon()
               ],
             ),
           ),

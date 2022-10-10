@@ -10,7 +10,7 @@ class LoadingIcon extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints.tightFor(height: 50, width: 50),
         child: const CircularProgressIndicator(
-          color: Colors.black,
+          color: Colors.indigo,
           strokeWidth: 4,
         ),
       ),
