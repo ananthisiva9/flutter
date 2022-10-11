@@ -216,12 +216,12 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image(
-                      image: NetworkImage(logo.toString()),
-                      height: 50,
-                    )),
+                // Padding(
+                // padding: const EdgeInsets.all(8.0),
+                //   child: Image(
+                // image: NetworkImage(logo.toString()),
+                //  height: 50,
+                //),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
