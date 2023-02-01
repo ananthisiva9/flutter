@@ -1,44 +1,39 @@
 class LoginModel {
-  LoginModel({
-    this.status,
-    this.error,
-    this.messages,
-    this.data,
-  });
-
-  int? status;
-  bool? error;
-  String? messages;
-  Data? data;
-
-  factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
-    status: json["status"],
-    error: json["error"],
-    messages: json["messages"],
-    data: Data.fromJson(json["data"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "status": status,
-    "error": error,
-    "messages": messages,
-    "data": data!.toJson(),
-  };
-}
-
-class Data {
-  Data({
-    this.token,
-  });
-
   String? token;
+  bool? client;
+  bool? consltant;
+  bool? doctor;
+  bool? dad;
+  bool? has_subscription;
+  int? id;
+  String? subscription_package;
+  String? sales;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    token: json["token"],
-  );
+  LoginModel({this.token, this.client, this.id,this.has_subscription,this.subscription_package,this.sales,this.dad});
 
-  Map<String, dynamic> toJson() => {
-    "token": token,
-  };
+  LoginModel.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
+    consltant =json['consltant'];
+    client = json['client'];
+    doctor = json['doctor'];
+    has_subscription = json['has_subscription'];
+    id = json['id'];
+    subscription_package = json['subscription_package'];
+    sales = json["sales"];
+    dad = json["dad"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['token'] = this.token;
+    data['consltant'] = this.consltant;
+    data['client'] = this.client;
+    data['doctor'] = this.doctor;
+    data ['has_subscription'] = this.has_subscription;
+    data['id'] = this.id;
+    data['subscription_package']= this.subscription_package;
+    data["sales"] = this.sales;
+    data["dad"] = this.dad;
+    return data;
+  }
 }
-

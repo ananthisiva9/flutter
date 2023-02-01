@@ -1,6 +1,6 @@
 {
-    "name": "sgx",
-    "short_name": "sgx",
+    "name": "shebirth",
+    "short_name": "shebirth",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

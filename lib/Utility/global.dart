@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:intl/intl.dart';
-import 'package:sgx/Login/Login_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shebirth/Login/Login_model.dart';
 
 class Global {
   static SharedPreferences? prefs;
 
   static Future<void> getPreferences() async {
-    prefs ??= await SharedPreferences.getInstance();
+    if (prefs == null) {
+      prefs = await SharedPreferences.getInstance();
+    }
   }
 
   static Future<dynamic> getUserDetails() async {
