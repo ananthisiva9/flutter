@@ -1,13 +1,8 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:admin_dashboard/utility/state_enum.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sgx/ForgotPassword/ForgotPassword.dart';
-import 'package:sgx/Utility/api_endpoint.dart';
-import 'package:sgx/Utility/state_enum.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'Login_controller.dart';
+import 'Login_Controller.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -17,91 +12,116 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
   void initState() {
     super.initState();
-    getData();
   }
-
-  var logo, name;
-  late String data;
-  bool isLoading = true;
-  @override
-  getData() async {
-    String url = ApiEndPoint.school_data;
-    var response = await http.get(Uri.parse(url));
-    if (response.statusCode == 201) {
-      data = response.body;
-      setState(() {
-        isLoading = false;
-        data = response.body;
-        name = jsonDecode(data)['data']['name'];
-        logo = jsonDecode(data)['logo'];
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Something Went Wrong!!!'),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
-
-  _launchWhatsapp() async {
-    var whatsapp = "+918310361527";
-    var whatsappAndroid = Uri.parse(
-        "whatsapp://send?phone=$whatsapp&text=Hey, I need help in using Development App");
-    if (await canLaunchUrl(whatsappAndroid)) {
-      await launchUrl(whatsappAndroid);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("WhatsApp is not installed on the device"),
-          backgroundColor: Colors.red,
+  Widget _buildWelcome() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              'Welcome To Our',
+              maxLines: 2,
+              style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
-      );
-    }
+      ],
+    );
+  }
+
+  Widget _buildLogo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              'Sukh Prasavam',
+              maxLines: 2,
+              style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildEmail() {
     return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+      padding: const EdgeInsets.all(8),
       child: TextFormField(
-        style: const TextStyle(color: Colors.black),
-        cursorColor: Colors.black,
+        style: const TextStyle(color: Colors.white),
+        cursorColor: Colors.white,
         keyboardType: TextInputType.emailAddress,
         controller: _emailController,
         decoration: const InputDecoration(
-          labelText: 'Admin Number',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.indigo),
+          prefixIcon: const Icon(
+            Icons.email,
+            color: Colors.white,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
+          labelText: 'E-mail',
+          labelStyle: const TextStyle(
+              color: Colors.white, fontSize: 14, fontFamily: 'Avenir'),
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPassword() {
+  Widget _buildPassword(LoginController controller) {
     return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+      padding: const EdgeInsets.all(8),
       child: TextFormField(
-        style: const TextStyle(color: Colors.black),
-        cursorColor: Colors.black,
+        style: const TextStyle(color: Colors.white),
+        cursorColor: Colors.white,
         keyboardType: TextInputType.text,
+        obscureText: controller.isPasswordObscured,
         controller: _passwordController,
-        decoration: const InputDecoration(
-          labelText: 'Password',
-          labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.indigo),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
-          ),
-        ),
+        decoration: InputDecoration(
+            prefixIcon: const Icon(
+              Icons.lock,
+              color: Colors.white,
+            ),
+            labelText: 'Password',
+            labelStyle: const TextStyle(
+                color: Colors.white, fontSize: 14, fontFamily: 'Avenir'),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            suffixIcon: InkWell(
+              onTap: controller.togglePassword,
+              child: const Icon(
+                Icons.visibility,
+                color: Colors.white,
+              ),
+            )),
       ),
     );
   }
@@ -109,65 +129,42 @@ class _LoginState extends State<Login> {
   Widget _buildLoginBtn(LoginController controller) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.indigo),
-        onPressed: () {
-          if (controller.state != StateEnum.loading) {
-            controller.loginMethod(
-                _emailController.text, _passwordController.text);
-          }
-        },
-        child: const Text(
-          "Login",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontFamily: 'Avenir',
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNeedHelp() {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: TextButton(
-        onPressed: () {
-          _launchWhatsapp();
-        },
-        child: Text(
-          'Need Help ?',
-          style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              color: Colors.blue,
-              fontSize: 15,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 1.4 * (MediaQuery.of(context).size.height / 20),
+            width: 5 * (MediaQuery.of(context).size.width / 08),
+            margin: const EdgeInsets.only(bottom: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xffe14589) , // foreground (text) color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: () {
+                if (controller.state != StateEnum.loading) {
+                  controller.loginMethod(
+                      _emailController.text, _passwordController.text);
+                }
+              },
+              child: controller.state == StateEnum.loading
+                  ? const CircularProgressIndicator(
+                color: Colors.white,
+              )
+                  : const Text(
+                "Login",
+                style: const TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 1.5,
+                  fontSize: 20,
+                  fontFamily: 'Avenir',
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForgotPassword() {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ForgotPassword()),
-          );
-        },
-        child: Text(
-          'Forgot Password ?',
-          style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              color: Colors.black,
-              fontSize: 15,
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -179,15 +176,17 @@ class _LoginState extends State<Login> {
         body: ChangeNotifierProvider(
           create: (context) => LoginController(context),
           child:
-              Consumer<LoginController>(builder: (context, controller, child) {
+          Consumer<LoginController>(builder: (context, controller, child) {
             return Container(
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: Image.asset('assets/login.jpg').image,
+                      image: Image.asset('assets/Background.png').image,
                       fit: BoxFit.cover)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  _buildWelcome(),
+                  _buildLogo(),
                   _buildContainer(controller),
                 ],
               ),
@@ -204,46 +203,41 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         ClipRRect(
           borderRadius: const BorderRadius.all(
-            Radius.circular(10),
+            const Radius.circular(20),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.65,
+            height: MediaQuery.of(context).size.height * 0.45,
             width: MediaQuery.of(context).size.width * 0.8,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.1),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // Padding(
-                // padding: const EdgeInsets.all(8.0),
-                //   child: Image(
-                // image: NetworkImage(logo.toString()),
-                //  height: 50,
-                //),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
+                    Expanded(
                       child: Text(
-                        name.toString(),
-                        style: const TextStyle(
-                          color: Colors.indigo,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        "Please Login to continue",
+                        maxLines: 2,
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                    )
+                    ),
                   ],
                 ),
                 _buildEmail(),
-                _buildPassword(),
+                _buildPassword(controller),
                 _buildLoginBtn(controller),
-                _buildForgotPassword(),
-                _buildNeedHelp(),
               ],
             ),
           ),

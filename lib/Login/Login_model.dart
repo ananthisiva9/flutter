@@ -1,44 +1,24 @@
 class LoginModel {
-  LoginModel({
-    this.status,
-    this.error,
-    this.messages,
-    this.data,
-  });
-
-  int? status;
-  bool? error;
-  String? messages;
-  Data? data;
-
-  factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
-    status: json["status"],
-    error: json["error"],
-    messages: json["messages"],
-    data: Data.fromJson(json["data"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "status": status,
-    "error": error,
-    "messages": messages,
-    "data": data!.toJson(),
-  };
-}
-
-class Data {
-  Data({
-    this.token,
-  });
-
+  int? id;
   String? token;
+  bool? sales;
+  bool? admin;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    token: json["token"],
-  );
+  LoginModel({this.id,this.token, this.admin,this.sales});
 
-  Map<String, dynamic> toJson() => {
-    "token": token,
-  };
+  LoginModel.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
+    sales =json['sales'];
+    admin = json['admin'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['token'] = this.token;
+    data['sales'] = this.sales;
+    data['admin'] = this.admin;
+    data['id'] = this.id;
+    return data;
+  }
 }
-
