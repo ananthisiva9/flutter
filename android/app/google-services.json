@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "82421977838",
-    "project_id": "plasma-galaxy-319009",
-    "storage_bucket": "plasma-galaxy-319009.appspot.com"
+    "project_number": "542422699769",
+    "project_id": "railmitraa-e20cd",
+    "storage_bucket": "railmitraa-e20cd.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:82421977838:android:48e955179e550bef4d19ff",
+        "mobilesdk_app_id": "1:542422699769:android:a002f039094e2fa685dc28",
         "android_client_info": {
-          "package_name": "com.android.application"
+          "package_name": "com.example.Railmitraa"
         }
       },
       "oauth_client": [
         {
-          "client_id": "82421977838-b4ji2b15k537jf2ro42k3m0hfuja2rck.apps.googleusercontent.com",
+          "client_id": "542422699769-p7duhl512gk7vr5goikb7mt39t7pnkg6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJQNDJT2FWxXT5OATUHHFH7n3Rh9-Q45I"
+          "current_key": "AIzaSyDm8Z5nKx8jlw-H5dih8i9Njru_AFBlx3o"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "82421977838-b4ji2b15k537jf2ro42k3m0hfuja2rck.apps.googleusercontent.com",
+              "client_id": "542422699769-p7duhl512gk7vr5goikb7mt39t7pnkg6.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "542422699769-6c1sllugqhe0boeurbl12qr937f563ei.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.railwaysuperapp"
+              }
             }
           ]
         }
